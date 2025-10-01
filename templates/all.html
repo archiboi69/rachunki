@@ -3,13 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Rachunki Focha - Wszystkie dane</title>
+    <title>Rachunki - Wszystkie dane</title>
     <link rel="stylesheet" href="{{ url_for('static', path="styles.css")}}">
 </head>
 <body>
-    <h1>Rachunki Focha - Wszystkie dane</h1>
+    <h1>Rachunki - Wszystkie dane</h1>
     <a href="{{ url_for('root') }}" class="btn">Powrót do podsumowania</a>
-    <table class="all-table">
+    <table id="all-data">
         <thead>
             <tr>
                 <th>Miesiąc</th>
