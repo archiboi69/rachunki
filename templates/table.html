@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rachunki Focha</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            margin-bottom: 1rem;
+            background-color: transparent;
+        }
+        .table th,
+        .table td {
+            vertical-align: middle;
+            border: 1px solid #dee2e6;
+        }
+        .table th {
+            background-color: #f8f9fa;
+            font-weight: bold;
+            text-align: center;
+            border-bottom: 2px solid #dee2e6;
+        }
+        .table td {
+            text-align: center;
+        }
+        .table-hover tbody tr:hover {
+            background-color: rgba(0, 0, 0, 0.075);
+        }
+        h1 {
+            color: #007bff;
+            margin-bottom: 10px;
+            font-size: 2.5em;
+        }
+        h2 {
+            color: #6c757d;
+            margin-bottom: 20px;
+            font-size: 1.5em;
+            font-weight: normal;
+        }
+        .btn {
+            display: inline-block;
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        .btn:hover {
+            background-color: #0056b3;
+        }
+        .table-responsive {
+            overflow-x: auto;
+            margin-bottom: 1rem;
+        }
+        .table {
+            min-width: 800px;
+        }
+        
+        /* Styles for summary page */
+        .summary-table th,
+        .summary-table td {
+            padding: 0.75rem 1rem;
+        }
+        
+        /* Styles for edit page */
+        .edit-table th,
+        .edit-table td {
+            padding: 0.5rem 0.75rem;
+        }
+        
+        @media (max-width: 768px) {
+            .table th,
+            .table td {
+                padding: 0.5rem 0.75rem;
+            }
+        }
+        
+        .summary-container {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+        
+        .table-responsive,
+        .chart-container {
+            width: 100%;
+        }
+        
+        .chart-container {
+            height: 400px; /* Adjust this value as needed */
+            margin-top: 40px; /* Add this line to increase space above the chart */
+        }
+        
+        @media (min-width: 992px) {
+            .table-responsive,
+            .chart-container {
+                width: 100%;
+            }
+        }
+        
+        .button-container {
+            display: flex;
+            justify-content: flex-start;  /* Change this line */
+            gap: 20px;
+            margin-top: 20px;
+        }
+    </style>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        $(document).ready(function() {
+            $('.editable').on('click', function() {
+                var content = $(this).text();
+                var input = $('<input type="text" class="edit-input" value="' + content + '">');
+                $(this).html(input);
+                input.focus();
+            });
+
+            $(document).on('blur keypress', '.edit-input', function(e) {
+                if (e.type === 'keypress' && e.which !== 13) return;
+                
+                var newContent = $(this).val();
+                var cell = $(this).parent();
+                var originalContent = cell.data('original-content') || cell.text();
+                var row = cell.closest('tr');
+                
+                // Send update to server
+                $.ajax({
+                    url: '/update_cell',
+                    method: 'POST',
+                    data: {
+                        row: cell.data('row'),
+                        column: cell.data('column'),
+                        value: newContent
+                    },
+                    success: function(response) {
+                        if (response.status === 'success') {
+                            console.log('Update successful');
+                            cell.html(newContent);
+                            // Update 'Sprawdzenie' cell
+                            row.find('td:last').html(response.sprawdzenie);
+                        } else {
+                            console.error('Update failed');
+                            cell.html(originalContent);  // Revert to original content
+                        }
+                    },
+                    error: function() {
+                        console.error('Update failed');
+                        cell.html(originalContent);  // Revert to original content
+                    }
+                });
+
+                if (e.type === 'keypress') {
+                    e.preventDefault();
+                    $(this).blur();
+                }
+            });
+        });
+    </script>
+</head>
+<body>
+    <h1>Rachunki Focha</h1>
+    <h2>
+        {% if page == "summary" %}
+            Podsumowanie
+        {% else %}
+            Edycja danych
+        {% endif %}
+    </h2>
+    
+    {% if page == "summary" %}
+        <div class="summary-container">
+            <div class="table-responsive">
+                <div class="summary-table">
+                    {% if tables == "<p>Brak danych</p>" %}
+                        {{ tables|safe }}
+                    {% else %}
+                        {{ tables|safe }}
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        <div class="button-container">
+            <button id="updateBillsBtn" class="btn">Dodaj rachunki</button>
+            {% if tables != "<p>Brak danych</p>" %}
+                <a href="{{ url_for('edit_data') }}" class="btn">Edytuj dane</a>
+                <button id="toggleChartBtn" class="btn">Pokaż wykres</button>
+            {% endif %}
+        </div>
+        {% if tables != "<p>Brak danych</p>" %}
+            <div id="chartContainer" class="chart-container" style="display: none;">
+                <canvas id="billsChart"></canvas>
+            </div>
+        {% endif %}
+    {% else %}
+        <a href="{{ url_for('summary') }}" class="btn">Powrót do podsumowania</a>
+        <div class="table-responsive">
+            <div class="edit-table">
+                {{ tables|safe }}
+            </div>
+        </div>
+    {% endif %}
+
+    {% if page == "summary" %}
+    <script>
+        var chartData = {{ chart_data|safe }};
+
+        function setupChart() {
+            var chart;
+
+            function initializeChart() {
+                var ctx = document.getElementById('billsChart').getContext('2d');
+                chart = new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        labels: chartData.labels,
+                        datasets: [{
+                            label: 'Czynsz',
+                            data: chartData.czynsz,
+                            borderColor: 'rgb(128, 128, 128)',
+                            backgroundColor: 'rgb(128, 128, 128)',
+                            fill: false,
+                            pointRadius: 3,
+                            pointHoverRadius: 5
+                        }, {
+                            label: 'Woda',
+                            data: chartData.woda,
+                            borderColor: 'rgb(54, 162, 235)',
+                            backgroundColor: 'rgb(54, 162, 235)',
+                            fill: false,
+                            pointRadius: 3,
+                            pointHoverRadius: 5
+                        }, {
+                            label: 'CO',
+                            data: chartData.co,
+                            borderColor: 'rgb(255, 0, 0)',
+                            backgroundColor: 'rgb(255, 0, 0)',
+                            fill: false,
+                            pointRadius: 3,
+                            pointHoverRadius: 5
+                        }, {
+                            label: 'Prąd',
+                            data: chartData.prad,
+                            borderColor: 'rgb(255, 165, 0)',
+                            backgroundColor: 'rgb(255, 165, 0)',
+                            fill: false,
+                            pointRadius: 3,
+                            pointHoverRadius: 5
+                        }, {
+                            label: 'Opłaty ASM',
+                            data: chartData.oplaty_asm,
+                            borderColor: 'rgb(75, 192, 192)',
+                            backgroundColor: 'rgb(75, 192, 192)',
+                            fill: false,
+                            pointRadius: 3,
+                            pointHoverRadius: 5
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        title: {
+                            display: true,
+                            text: 'Trendy w rachunkach'
+                        },
+                        scales: {
+                            x: {
+                                reverse: true
+                            },
+                            y: {
+                                beginAtZero: true
+                            }
+                        },
+                        legend: {
+                            labels: {
+                                usePointStyle: true,
+                                pointStyle: 'circle'
+                            }
+                        }
+                    }
+                });
+            }
+
+            // Add this new script for toggling the chart
+            var toggleChartBtn = document.getElementById('toggleChartBtn');
+            if (toggleChartBtn) {
+                toggleChartBtn.addEventListener('click', function() {
+                    var chartContainer = document.getElementById('chartContainer');
+                    if (chartContainer.style.display === 'none') {
+                        chartContainer.style.display = 'block';
+                        this.textContent = 'Ukryj wykres';
+                        if (!chart) {
+                            initializeChart();
+                        }
+                    } else {
+                        chartContainer.style.display = 'none';
+                        this.textContent = 'Pokaż wykres';
+                    }
+                });
+            }
+        }
+
+        // Only setup the chart if there's data
+        if (chartData && Object.keys(chartData).length > 0) {
+            setupChart();
+        }
+
+        // Add this new script for updating bills
+        $(document).ready(function() {
+            $('#updateBillsBtn').click(function() {
+                var btn = $(this);
+                btn.prop('disabled', true);
+                btn.text('Dodawanie...');
+                $.ajax({
+                    url: '/update_bills',
+                    method: 'POST',
+                    dataType: 'json',
+                    success: function(data) {
+                        console.log('Response received:', data);
+                        if (data.status === 'success') {
+                            alert('Rachunki dodane pomyślnie. Odśwież stronę, aby zobaczyć zmiany.');
+                            location.reload();
+                        } else {
+                            alert('Błąd podczas dodawania rachunków: ' + data.message);
+                            console.error('Error output:', data.output);
+                        }
+                    },
+                    error: function(jqXHR, textStatus, errorThrown) {
+                        console.error('AJAX error:', textStatus, errorThrown);
+                        alert('Wystąpił błąd podczas dodawania rachunków. Sprawdź konsolę przeglądarki.');
+                    },
+                    complete: function() {
+                        btn.prop('disabled', false);
+                        btn.text('Dodaj rachunki');
+                    }
+                });
+            });
+        });
+    </script>
+    {% endif %}
+
+    <!-- Add this where you want to display the quarterly totals, 
+         probably after the main table but before the chart -->
+    {% if quarterly_tables %}
+        <div class="quarterly-summary">
+            <h3>Podsumowanie kwartalne</h3>
+            {{ quarterly_tables | safe }}
+        </div>
+    {% endif %}
+</body>
+</html>
