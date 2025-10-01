@@ -4,28 +4,42 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Rachunki Focha</title>
+    <link rel="stylesheet" href="{{ url_for('static', path="styles.css")}}">
 </head>
 <body>
     <h1>Rachunki Focha</h1>
+        <a href="{{ url_for('all') }}" class="btn">Wszystkie dane</a>
     <table class="summary-table">
         <thead>
             <tr>
                 <th>Miesiąc</th>
-                <th>Czynsz</th>
-                <th>Woda</th>
-                <th>CO</th>
+                <th>🏠 Czynsz [zł]</th>
+                <th>💧 Woda [zł]</th>
+                <th>🌡️ Ogrzewanie [zł]</th>
+                <th>⚡ Prąd [zł]</th>
+                <th>🌐 Internet [zł]</th>
+                <th>Opłaty ASM [zł]</th>
+                <th>Razem [zł]</th>
             </tr>
         </thead>
         <tbody>
-            {% for utility in utilities %}
+            {% for row in summary_data %}
             <tr>
-                <td>{{utility.month.strftime('%Y-%m')}}</td>
-                <td>{{utility.maintenance_cost or 0}}</td>
-                <td>{{utility.water_and_sewage_cost or 0}}</td>
-                <td>{{utility.heating_cost or 0}}</td>
+                <td>{{row.month.strftime('%Y-%m')}}</td>
+                <td>{{row.maintenance or 0}}</td>
+                <td>{{row.water or 0}}</td>
+                <td>{{row.heating or 0}}</td>
+                <td>{{row.electrcity or 0}}</td>
+                <td>{{row.internet or 0}}</td>
+                <td>{{row.asm or 0}}</td>
+                <td class="total">{{row.total or 0}}</td>
             </tr>
             {% endfor %}
+            
         </tbody>
     </table>
+    <div class="grand-total">
+        Ostatnie {{ summary_data | length }} miesięcy: {{ summary_data | sum(attribute='total') }} zł
+    </div>
 </body>
 </html>

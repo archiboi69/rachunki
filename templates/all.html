@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rachunki Focha - Wszystkie dane</title>
+    <link rel="stylesheet" href="{{ url_for('static', path="styles.css")}}">
+</head>
+<body>
+    <h1>Rachunki Focha - Wszystkie dane</h1>
+    <a href="{{ url_for('root') }}" class="btn">Powrót do podsumowania</a>
+    <table class="all-table">
+        <thead>
+            <tr>
+                <th>Miesiąc</th>
+                <th>Czynsz [zł]</th>
+                <th>LCO [GJ]</th>
+                <th>LCW [m3]</th>
+                <th>LZW [m3]</th>
+                <th>CO [zł]</th>
+                <th>CO/CW wspólny [zł]</th>
+                <th>Podgrzanie wody [zł]</th>
+                <th>Woda i kanalizacja [zł]</th>
+                <th>Prąd [kWh]</th>
+                <th>Prąd [zł]</th>
+                <th>Internet [zł]</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for utility in all_data %}
+            <tr>
+                <td>{{ utility.month.strftime('%Y-%m') }}</td>
+                <td>{{ utility.maintenance_cost or 0 }}</td>
+                <td>{{ utility.heating_usage or 0 }}</td>
+                <td>{{ utility.hotwater_usage or 0 }}</td>
+                <td>{{ utility.coldwater_usage or 0 }}</td>
+                <td>{{ utility.heating_cost or 0 }}</td>
+                <td>{{ utility.heating_common_cost or 0 }}</td>
+                <td>{{ utility.water_heating_cost or 0 }}</td>
+                <td>{{ utility.water_and_sewage_cost or 0 }}</td>
+                <td>{{ utility.electricity_usage or 0 }}</td>
+                <td>{{ utility.electricity_cost or 0 }}</td>
+                <td>{{ utility.internet_cost or 0 }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</body>
+</html>
