@@ -6,10 +6,17 @@ from decimal import Decimal
 DATABASE_URL = 'sqlite:///instance/utilities.db'
 
 engine = create_engine(DATABASE_URL)
-Session = sessionmaker(bind=engine)
+SessionLocal = sessionmaker(bind=engine)
 
 def init_db():
     Base.metadata.create_all(bind=engine)
+
+def get_db():
+    db = SessionLocal()
+    try:
+        yield db
+    finally:
+        db.close()
 
 class Base(DeclarativeBase):
     pass
