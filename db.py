@@ -8,16 +8,6 @@ DATABASE_URL = 'sqlite:///instance/utilities.db'
 engine = create_engine(DATABASE_URL)
 SessionLocal = sessionmaker(bind=engine)
 
-def init_db():
-    Base.metadata.create_all(bind=engine)
-
-def get_db():
-    db = SessionLocal()
-    try:
-        yield db
-    finally:
-        db.close()
-
 class Base(DeclarativeBase):
     pass
 
@@ -44,5 +34,15 @@ class Utilities(Base):
 
     def __repr__(self):
         return f"Utilities(id={self.id}, month={self.month}"
+
+    def init_db():
+        Base.metadata.create_all(bind=engine)
+
+    def get_db():
+        db = SessionLocal()
+        try:
+            yield db
+        finally:
+            db.close()
 
     
