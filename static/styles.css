@@ -9,7 +9,7 @@ body {
 table {
     width: 100%;
     border-collapse: separate;
-    border-spacing: 0;
+    border-spacing: 2px;
     margin-bottom: 1rem;
     background-color: transparent;
 }
@@ -24,12 +24,15 @@ table th {
     background-color: #f8f9fa;
     font-weight: bold;
     text-align: center;
+    border: none;
     border-bottom: 2px solid #dee2e6;
+    padding: 10px;
 }
 
 table td {
     text-align: center;
 }
+
 tbody tr:hover {
     background-color: rgba(0, 0, 0, 0.075);
 }
@@ -40,12 +43,13 @@ tbody tr:hover {
 
 .button {
     display: inline-block;
+    min-width: 80px;
     background-color: #d23e00;
     color: white;
-    padding: 10px 20px;
+    padding: 5px 20px;
     text-decoration: none;
+    text-align: center;
     margin-right: 10px;
-    border-radius: 10px;
 }
 
 .total {
