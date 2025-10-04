@@ -45,7 +45,6 @@ tbody tr:hover {
 
 .button {
     display: inline-block;
-    min-width: 80px;
     background-color: #d23e00;
     color: white;
     padding: 5px 20px;
@@ -54,7 +53,7 @@ tbody tr:hover {
 }
 
 .navbar .button {
-    flex: initial;
+    flex: 0 1 80px;
 }
 
 .button:hover {
