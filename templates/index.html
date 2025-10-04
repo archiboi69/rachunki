@@ -7,9 +7,13 @@
     <link rel="stylesheet" href="{{ url_for('static', path="styles.css")}}">
 </head>
 <body>
-    <h1>Rachunki</h1>
-        <a href="{{ url_for('all') }}" class="btn">Wszystkie dane</a>
-    <table id="summary-data">
+    <h1>Rachunki Focha</h1>
+    <nav class="navbar">
+        <a class="button">Dodaj</a>
+        <a href="{{ url_for('all') }}" class="button">Edytuj</a>
+        <a class="button">Rozlicz</a>
+    </nav>
+    <table class="summary-table">
         <thead>
             <tr>
                 <th>Miesiąc</th>
