@@ -19,10 +19,10 @@ async def root(request: Request, db: Session = Depends(get_db)):
         {'request': request, 'summary_data': summary_data}
     )
 
-@app.get('/all')
-async def all(request: Request, db: Session = Depends(get_db)):
+@app.get('/edit')
+async def edit(request: Request, db: Session = Depends(get_db)):
     all_data = get_all_data(db)
     return templates.TemplateResponse(
-        'all.html',
+        'edit.html',
         {'request': request, 'all_data': all_data}
     )

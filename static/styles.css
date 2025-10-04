@@ -34,10 +34,18 @@ tbody tr:hover {
     background-color: rgba(0, 0, 0, 0.075);
 }
 
+.navbar {
+    margin-bottom: 20px;
+}
+
 .button {
+    display: inline-block;
     background-color: #d23e00;
     color: white;
     padding: 10px 20px;
+    text-decoration: none;
+    margin-right: 10px;
+    border-radius: 10px;
 }
 
 .total {

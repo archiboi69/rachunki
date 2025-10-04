@@ -7,8 +7,9 @@
     <link rel="stylesheet" href="{{ url_for('static', path="styles.css")}}">
 </head>
 <body>
-    <h1>Rachunki - Wszystkie dane</h1>
-    <a href="{{ url_for('root') }}" class="btn">Powrót do podsumowania</a>
+    <h1>Wszystkie dane</h1>
+    <nav class="navbar"><a href="{{ url_for('root') }}" class="button">Podsumowanie</a></nav>
+        
     <table id="all-data">
         <thead>
             <tr>
