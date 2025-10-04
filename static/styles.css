@@ -52,6 +52,10 @@ tbody tr:hover {
     margin-right: 10px;
 }
 
+.button:hover {
+    background-color: #b53700;
+}
+
 .total {
     font-weight: bold;
 }
