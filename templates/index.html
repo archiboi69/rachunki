@@ -8,7 +8,11 @@
 </head>
 <body>
     <h1>Rachunki Focha</h1>
-        <a href="{{ url_for('all') }}" class="btn">Wszystkie dane</a>
+    <nav class="navbar">
+        <a class="button">Dodaj</a>
+        <a href="{{ url_for('all') }}" class="button">Edytuj</a>
+        <a class="button">Rozlicz</a>
+    </nav>
     <table class="summary-table">
         <thead>
             <tr>

@@ -22,6 +22,12 @@ table td {
     text-align: right;
 }
 
+.button {
+    background-color: #d23e00;
+    color: white;
+    padding: 10px 20px;
+}
+
 .total {
     font-weight: bold;
 }
