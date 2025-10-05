@@ -3,7 +3,7 @@ from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from sqlalchemy.orm import Session
 from db import get_db
-from services.summary import get_summary, get_all_data
+from services.service import get_summary, get_all_data, settle_period
 
 app = FastAPI()
 app.mount('/static', StaticFiles(directory='static'), name='static')
@@ -25,4 +25,12 @@ async def edit(request: Request, db: Session = Depends(get_db)):
     return templates.TemplateResponse(
         'edit.html',
         {'request': request, 'all_data': all_data}
+    )
+
+@app.get('/settle')
+async def settle(request: Request, year: int, period: str, advance: float, pax: int, db: Session = Depends(get_db)):
+    settlement = settle_period(db, year, period, advance, pax)
+    return templates.TemplateResponse(
+        'settle.html',
+        {'request': request, 'settlement': settlement}
     )

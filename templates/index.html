@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Rachunki</title>
-    <link rel="stylesheet" href="{{ url_for('static', path="styles.css")}}">
+    <link rel="stylesheet" href="{{ url_for('static', path='styles.css') }}">
 </head>
 
 <body>
@@ -34,7 +34,7 @@
                 <td>{{row.maintenance or 0}}</td>
                 <td>{{row.water or 0}}</td>
                 <td>{{row.heating or 0}}</td>
-                <td>{{row.electrcity or 0}}</td>
+                <td>{{row.electricity or 0}}</td>
                 <td>{{row.internet or 0}}</td>
                 <td>{{row.asm or 0}}</td>
                 <td class="total">{{row.total or 0}}</td>
@@ -61,6 +61,7 @@
                 <option value="spring">Wiosna</option>
                 <option value="summer">Lato</option>
                 <option value="fall">Jesień</option>
+                <option value="all">Cały rok</option>
             </select>
 
             <label for="advance">Zaliczka</label>
