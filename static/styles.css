@@ -1,22 +1,103 @@
-.quarterly-table {
-    width: auto;
-    margin: 20px 0;
-    border-collapse: collapse;
+body {
+    font-family: Arial, sans-serif;
+    line-height: 1.6;
+    color: #333;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+}
+table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 2px;
+    margin-bottom: 1rem;
+    background-color: transparent;
 }
 
-.quarterly-table th {
-    background-color: #f8f9fa;
-    padding: 8px 15px;
+table th,
+table td {
+    vertical-align: middle;
     border: 1px solid #dee2e6;
+}
+
+table th {
+    background-color: #f8f9fa;
+    font-weight: bold;
+    text-align: center;
+    border: none;
+    border-bottom: 2px solid #dee2e6;
+    padding: 10px;
+}
+
+table td {
     text-align: center;
 }
 
-.quarterly-table td {
-    padding: 8px 15px;
-    border: 1px solid #dee2e6;
-    text-align: right;
+tbody tr:hover {
+    background-color: rgba(0, 0, 0, 0.075);
 }
 
-.quarterly-summary {
-    margin: 30px 0;
-} 
+.navbar {
+    display: flex;
+    margin-bottom: 20px;
+    gap: 10px;
+}
+
+button {
+    appearance: none; /* Remove native styling */
+    -webkit-appearance: none;
+    -moz-appearance: none;
+}
+
+.button {
+    display: inline-block;
+    background-color: #d23e00;
+    color: white;
+    padding: 5px 20px;
+    text-decoration: none;
+    text-align: center;
+    border: none;
+    box-sizing: content-box;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+.navbar .button {
+    flex: 0 1 80px;
+}
+
+.button:hover {
+    background-color: #b53700;
+}
+
+.total {
+    font-weight: bold;
+}
+
+.grand-total {
+    text-align: right;
+    font-size: 1.5em;
+    font-weight: bold;
+    margin-top: 20px;
+}
+
+.modal {
+    position: fixed;
+    inset: 0;
+    display: none;
+    background-color: rgba(0, 0, 0, 0.075);
+}
+
+.modal form {
+    width: fit-content;
+    max-width: 90vw;
+    height: fit-content;
+    position: fixed;
+    inset: 0;
+    margin: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding: 20px;
+    background-color: white;
+}
