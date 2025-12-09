@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rachunki - Wszystkie dane</title>
+    <link rel="stylesheet" href="{{ url_for('static', path='styles.css') }}">
+</head>
+<body>
+    <h1>Rozliczenie {{settlement.period}}</h1>
+    <nav class="navbar"><a href="{{ url_for('root') }}" class="button">Podsumowanie</a></nav>
+    <div class="settlement">
+        <p>Rachunki wyniosły <em>{{ settlement.cost }}</em> zł</p>
+        <p>Pobrano <em>{{ settlement.advance }}</em> zł zaliczki</p>
+        {% if settlement.outstanding > 0 %}
+            <p>Niedopłata <em>{{ settlement.outstanding_per_person }}</em> zł na osobę</p>
+        {% else %}
+            <p>Zwrot <em>{{ settlement.outstanding_per_person | abs }}</em> zł na osobę</p>
+        {% endif %}
+    </div>
+
+</body>
+</html>

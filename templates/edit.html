@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rachunki - Wszystkie dane</title>
+    <link rel="stylesheet" href="{{ url_for('static', path="styles.css")}}">
+</head>
+<body>
+    <h1>Wszystkie dane</h1>
+    <nav class="navbar"><a href="{{ url_for('root') }}" class="button">Podsumowanie</a></nav>
+
+    <table id="all-data">
+        <thead>
+            <tr>
+                <th>Miesiąc</th>
+                <th>Czynsz [zł]</th>
+                <th>LCO [GJ]</th>
+                <th>LCW [m3]</th>
+                <th>LZW [m3]</th>
+                <th>CO [zł]</th>
+                <th>CO/CW wspólny [zł]</th>
+                <th>Podgrzanie wody [zł]</th>
+                <th>Woda i kanalizacja [zł]</th>
+                <th>Prąd [kWh]</th>
+                <th>Prąd [zł]</th>
+                <th>Internet [zł]</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for utility in all_data %}
+            <tr data-id="{{ utility.id }}">
+                <td>{{ utility.month.strftime('%Y-%m') }}</td>
+                <td class="editable" data-field="maintenance_cost">{{ utility.maintenance_cost or 0 }}</td>
+                <td class="editable" data-field="heating_usage">{{ utility.heating_usage or 0 }}</td>
+                <td class="editable" data-field="hotwater_usage">{{ utility.hotwater_usage or 0 }}</td>
+                <td class="editable" data-field="coldwater_usage">{{ utility.coldwater_usage or 0 }}</td>
+                <td class="editable" data-field="heating_cost">{{ utility.heating_cost or 0 }}</td>
+                <td class="editable" data-field="heating_common_cost">{{ utility.heating_common_cost or 0 }}</td>
+                <td class="editable" data-field="water_heating_cost">{{ utility.water_heating_cost or 0 }}</td>
+                <td class="editable" data-field="water_and_sewage_cost">{{ utility.water_and_sewage_cost or 0 }}</td>
+                <td class="editable" data-field="electricity_usage">{{ utility.electricity_usage or 0 }}</td>
+                <td class="editable" data-field="electricity_cost">{{ utility.electricity_cost or 0 }}</td>
+                <td class="editable" data-field="internet_cost">{{ utility.internet_cost or 0 }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const table = document.getElementById('all-data');
+
+            table.addEventListener('click', function(e) {
+                const cell = e.target.closest('.editable');
+                if (!cell || cell.querySelector('input')) return;
+
+                const currentValue = cell.innerText.trim();
+                const field = cell.dataset.field;
+                const row = cell.closest('tr');
+                const id = row.dataset.id;
+
+                const input = document.createElement('input');
+                input.type = 'number';
+                input.step = '0.01';
+                input.value = currentValue;
+                input.style.width = '100%';
+
+                cell.innerText = '';
+                cell.appendChild(input);
+                input.focus();
+
+                function save() {
+                    let newValue = input.value.trim();
+                    if (newValue === '') {
+                        newValue = '0'; // Default to 0 if empty
+                    }
+
+                    // Simple optimistic UI update
+                    cell.innerText = newValue;
+
+                    fetch('/update_cell', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            id: parseInt(id),
+                            field: field,
+                            value: parseFloat(newValue)
+                        }),
+                    })
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error('Network response was not ok');
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        console.log('Success:', data);
+                        cell.style.backgroundColor = '#d4edda'; // Light green
+                        setTimeout(() => {
+                            cell.style.backgroundColor = '';
+                        }, 1000);
+                    })
+                    .catch((error) => {
+                        console.error('Error:', error);
+                        cell.innerText = currentValue; // Revert
+                        cell.style.backgroundColor = '#f8d7da'; // Light red
+                        setTimeout(() => {
+                            cell.style.backgroundColor = '';
+                        }, 1000);
+                        alert('Error updating value. Please try again.');
+                    });
+                }
+
+                input.addEventListener('blur', save);
+                input.addEventListener('keydown', function(event) {
+                    if (event.key === 'Enter') {
+                        input.blur();
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>
